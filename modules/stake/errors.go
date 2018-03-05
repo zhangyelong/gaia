@@ -13,7 +13,7 @@ var (
 	errBadBondingAmount   = fmt.Errorf("Amount must be > 0")
 	errNoBondingAcct      = fmt.Errorf("No bond account for this (address, validator) pair")
 	errCommissionNegative = fmt.Errorf("Commission must be positive")
-	errCommissionHuge     = fmt.Errorf("Commission cannot be more than 100%")
+	errCommissionHuge     = fmt.Errorf("Commission cannot be more than 100%%")
 
 	errBadValidatorAddr      = fmt.Errorf("Validator does not exist for that address")
 	errCandidateExistsAddr   = fmt.Errorf("Candidate already exist, cannot re-declare candidacy")
