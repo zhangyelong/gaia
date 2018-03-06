@@ -14,7 +14,7 @@ import (
 
 // Params defines the high level settings for staking
 type Params struct {
-	HoldAccount sdk.Actor `json:"hold_account"` // PubKey where all bonded coins are held
+	HoldAccount    sdk.Actor `json:"hold_account"` // PubKey where all bonded coins are held
 
 	MaxVals          uint16 `json:"max_vals"`           // maximum number of validators
 	AllowedBondDenom string `json:"allowed_bond_denom"` // bondable coin denomination
@@ -24,6 +24,7 @@ type Params struct {
 	GasEditCandidacy    int64 `json:"gas_edit_candidacy"`
 	GasDelegate         int64 `json:"gas_delegate"`
 	GasUnbond           int64 `json:"gas_unbond"`
+	GasDefineService    int64 `json:"gas_define_service"`
 }
 
 func defaultParams() Params {
@@ -35,6 +36,7 @@ func defaultParams() Params {
 		GasEditCandidacy:    20,
 		GasDelegate:         20,
 		GasUnbond:           20,
+		GasDefineService:    20,
 	}
 }
 
@@ -259,3 +261,9 @@ type DelegatorBond struct {
 	PubKey crypto.PubKey
 	Shares uint64
 }
+
+type ServiceDefinition struct{
+	Name          string
+	Description   string
+}
+

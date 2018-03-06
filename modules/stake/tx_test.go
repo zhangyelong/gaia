@@ -57,28 +57,34 @@ func TestAllAreTx(t *testing.T) {
 	assert := assert.New(t)
 
 	// make sure all types construct properly
-	pubKey := newPubKey("1234567890")
-	bondAmt := uint64(1234321)
-	bond := coin.Coin{Denom: "ATOM", Amount: int64(bondAmt)}
+	//pubKey := newPubKey("1234567890")
+	//bondAmt := uint64(1234321)
+	//bond := coin.Coin{Denom: "ATOM", Amount: int64(bondAmt)}
 
 	// Note that Wrap is only defined on BondUpdate, so when you call it,
 	// you lose all info on the embedding type. Please add Wrap()
 	// method to all the parents
-	txDelegate := NewTxDelegate(bond, pubKey)
-	_, ok := txDelegate.Unwrap().(TxDelegate)
-	assert.True(ok, "%#v", txDelegate)
+	//txDelegate := NewTxDelegate(bond, pubKey)
+	//_, ok := txDelegate.Unwrap().(TxDelegate)
+	//assert.True(ok, "%#v", txDelegate)
+	//
+	//txUnbond := NewTxUnbond(bondAmt, pubKey)
+	//_, ok = txUnbond.Unwrap().(TxUnbond)
+	//assert.True(ok, "%#v", txUnbond)
+	//
+	//txDecl := NewTxDeclareCandidacy(bond, pubKey, Description{})
+	//_, ok = txDecl.Unwrap().(TxDeclareCandidacy)
+	//assert.True(ok, "%#v", txDecl)
+	//
+	//txEditCan := NewTxEditCandidacy(pubKey, Description{})
+	//_, ok = txEditCan.Unwrap().(TxEditCandidacy)
+	//assert.True(ok, "%#v", txEditCan)
 
-	txUnbond := NewTxUnbond(bondAmt, pubKey)
-	_, ok = txUnbond.Unwrap().(TxUnbond)
-	assert.True(ok, "%#v", txUnbond)
+	txDefineSvc := NewTxDefineService("", "")
+	_, ok := txDefineSvc.Unwrap().(TxDefineService)
+	assert.True(ok, "%#v", txDefineSvc)
 
-	txDecl := NewTxDeclareCandidacy(bond, pubKey, Description{})
-	_, ok = txDecl.Unwrap().(TxDeclareCandidacy)
-	assert.True(ok, "%#v", txDecl)
 
-	txEditCan := NewTxEditCandidacy(pubKey, Description{})
-	_, ok = txEditCan.Unwrap().(TxEditCandidacy)
-	assert.True(ok, "%#v", txEditCan)
 }
 
 func TestSerializeTx(t *testing.T) {

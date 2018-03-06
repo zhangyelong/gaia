@@ -14,7 +14,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/modules/coin"
 	"github.com/cosmos/cosmos-sdk/modules/fee"
 	"github.com/cosmos/cosmos-sdk/modules/nonce"
-	"github.com/cosmos/gaia/modules/stake"
+	"github.com/zhangyelong/gaia/modules/stake"
 )
 
 const (

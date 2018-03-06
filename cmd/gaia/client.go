@@ -18,7 +18,7 @@ import (
 	noncecmd "github.com/cosmos/cosmos-sdk/modules/nonce/commands"
 	rolecmd "github.com/cosmos/cosmos-sdk/modules/roles/commands"
 
-	stakecmd "github.com/cosmos/gaia/modules/stake/commands"
+	stakecmd "github.com/zhangyelong/gaia/modules/stake/commands"
 )
 
 // clientCmd is the entry point for this binary
@@ -48,6 +48,7 @@ func prepareClientCommands() {
 		stakecmd.CmdQueryCandidate,
 		stakecmd.CmdQueryDelegatorBond,
 		stakecmd.CmdQueryDelegatorCandidates,
+		stakecmd.CmdQueryServiceDefinition,
 	)
 
 	// set up the middleware
@@ -76,6 +77,7 @@ func prepareClientCommands() {
 		stakecmd.CmdEditCandidacy,
 		stakecmd.CmdDelegate,
 		stakecmd.CmdUnbond,
+		stakecmd.CmdDefineService,
 	)
 
 	clientCmd.AddCommand(

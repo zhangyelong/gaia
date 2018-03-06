@@ -18,6 +18,7 @@ var (
 	CandidateKeyPrefix      = []byte{0x03} // prefix for each key to a candidate
 	DelegatorBondKeyPrefix  = []byte{0x04} // prefix for each key to a delegator's bond
 	DelegatorBondsKeyPrefix = []byte{0x05} // prefix for each key to a delegator's bond
+	ServiceDefinitionKeyPrefix = []byte{0x06} // prefix for each key to a service definition
 )
 
 // GetCandidateKey - get the key for the candidate with pubKey
@@ -235,4 +236,30 @@ func loadParams(store state.SimpleDB) (params Params) {
 func saveParams(store state.SimpleDB, params Params) {
 	b := wire.BinaryBytes(params)
 	store.Set(ParamKey, b)
+}
+
+
+func saveService(store state.SimpleDB, service *ServiceDefinition) {
+
+	b := wire.BinaryBytes(*service)
+	store.Set(GetServiceDefinitionKey(service.Name), b)
+}
+
+func loadService(store state.SimpleDB, name string) *ServiceDefinition {
+	serviceBytes := store.Get(GetServiceDefinitionKey(name))
+	if serviceBytes == nil {
+		return nil
+	}
+
+	service := new(ServiceDefinition)
+	err := wire.ReadBinaryBytes(serviceBytes, service)
+	if err != nil {
+		panic(err)
+	}
+	return service
+}
+
+// GetServiceDefinitionKey - get the key for a service definition
+func GetServiceDefinitionKey(name string) []byte {
+	return append(DelegatorBondsKeyPrefix, wire.BinaryBytes(&name)...)
 }

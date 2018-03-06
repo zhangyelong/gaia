@@ -19,10 +19,12 @@ const (
 	ByteTxEditCandidacy    = 0x56
 	ByteTxDelegate         = 0x57
 	ByteTxUnbond           = 0x58
+	ByteTxDefineService    = 0x59
 	TypeTxDeclareCandidacy = stakingModuleName + "/declareCandidacy"
 	TypeTxEditCandidacy    = stakingModuleName + "/editCandidacy"
 	TypeTxDelegate         = stakingModuleName + "/delegate"
 	TypeTxUnbond           = stakingModuleName + "/unbond"
+	TypeTxDefineService    = stakingModuleName + "/defineService"
 )
 
 func init() {
@@ -30,10 +32,11 @@ func init() {
 	sdk.TxMapper.RegisterImplementation(TxEditCandidacy{}, TypeTxEditCandidacy, ByteTxEditCandidacy)
 	sdk.TxMapper.RegisterImplementation(TxDelegate{}, TypeTxDelegate, ByteTxDelegate)
 	sdk.TxMapper.RegisterImplementation(TxUnbond{}, TypeTxUnbond, ByteTxUnbond)
+	sdk.TxMapper.RegisterImplementation(TxDefineService{}, TypeTxDefineService, ByteTxDefineService)
 }
 
 //Verify interface at compile time
-var _, _, _, _ sdk.TxInner = &TxDeclareCandidacy{}, &TxEditCandidacy{}, &TxDelegate{}, &TxUnbond{}
+var _, _, _, _, _ sdk.TxInner = &TxDeclareCandidacy{}, &TxEditCandidacy{}, &TxDelegate{}, &TxUnbond{}, &TxDefineService{}
 
 // BondUpdate - struct for bonding or unbonding transactions
 type BondUpdate struct {
@@ -146,6 +149,34 @@ func (tx TxUnbond) ValidateBasic() error {
 
 	if tx.Shares == 0 {
 		return fmt.Errorf("Shares must be > 0")
+	}
+	return nil
+}
+
+// TxDefineService - struct for service define transactions
+type TxDefineService struct{
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+}
+
+// NewTxDefineService - new TxDefineService
+func NewTxDefineService(name string, description string) sdk.Tx {
+	return TxDefineService{
+		Name:          name,
+		Description:   description,
+	}.Wrap()
+}
+
+// Wrap - Wrap a Tx as a Basecoin Tx
+func (tx TxDefineService) Wrap() sdk.Tx { return sdk.Tx{tx} }
+
+// ValidateBasic
+func (tx TxDefineService) ValidateBasic() error {
+	if tx.Name == "" {
+		return errServiceNameEmpty
+	}
+	if tx.Description == "" {
+		return errServiceDescEmpty
 	}
 	return nil
 }

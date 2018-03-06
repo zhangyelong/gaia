@@ -11,7 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/commands/query"
 	"github.com/cosmos/cosmos-sdk/modules/coin"
 	"github.com/cosmos/cosmos-sdk/stack"
-	"github.com/cosmos/gaia/modules/stake"
+	"github.com/zhangyelong/gaia/modules/stake"
 )
 
 //nolint
@@ -40,7 +40,14 @@ var (
 		Short: "Query all delegators candidates' pubkeys based on address",
 	}
 
+	CmdQueryServiceDefinition = &cobra.Command{
+		Use:   "service-definition",
+		RunE:  cmdQueryServiceDefinition,
+		Short: "Query a service definition based on name",
+	}
+
 	FlagDelegatorAddress = "delegator-address"
+	FlagServiceName = "svc-name"
 )
 
 func init() {
@@ -49,11 +56,14 @@ func init() {
 	fsPk.String(FlagPubKey, "", "PubKey of the validator-candidate")
 	fsAddr := flag.NewFlagSet("", flag.ContinueOnError)
 	fsAddr.String(FlagDelegatorAddress, "", "Delegator Hex Address")
+	fsSn := flag.NewFlagSet("", flag.ContinueOnError)
+	fsSn.String(FlagServiceName, "", "Name of the service")
 
 	CmdQueryCandidate.Flags().AddFlagSet(fsPk)
 	CmdQueryDelegatorBond.Flags().AddFlagSet(fsPk)
 	CmdQueryDelegatorBond.Flags().AddFlagSet(fsAddr)
 	CmdQueryDelegatorCandidates.Flags().AddFlagSet(fsAddr)
+	CmdQueryServiceDefinition.Flags().AddFlagSet(fsSn)
 }
 
 func cmdQueryCandidates(cmd *cobra.Command, args []string) error {
@@ -133,4 +143,18 @@ func cmdQueryDelegatorCandidates(cmd *cobra.Command, args []string) error {
 	}
 
 	return query.OutputProof(candidates, height)
+}
+
+func cmdQueryServiceDefinition(cmd *cobra.Command, args []string) error {
+
+	name := viper.GetString(FlagServiceName)
+	prove := !viper.GetBool(commands.FlagTrustNode)
+	key := stack.PrefixedKey(stake.Name(), stake.GetServiceDefinitionKey(name))
+	var svc stake.ServiceDefinition
+	height, err := query.GetParsed(key, &svc, query.GetHeight(), prove)
+	if err != nil {
+		return err
+	}
+
+	return query.OutputProof(svc, height)
 }

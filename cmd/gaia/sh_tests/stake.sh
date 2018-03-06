@@ -270,7 +270,7 @@ test04Unbond() {
 }
 
 # Load common then run these tests with shunit2!
-CLI_DIR=$GOPATH/src/github.com/cosmos/gaia/vendor/github.com/cosmos/cosmos-sdk/tests/cli
+CLI_DIR=$GOPATH/src/github.com/zhangyelong/gaia/vendor/github.com/cosmos/cosmos-sdk/tests/cli
 
 . $CLI_DIR/common.sh
 . $CLI_DIR/shunit2

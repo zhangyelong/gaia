@@ -137,6 +137,9 @@ func (h Handler) CheckTx(ctx sdk.Context, store state.SimpleDB,
 	case TxUnbond:
 		return sdk.NewCheck(params.GasUnbond, ""),
 			checker.unbond(txInner)
+	case TxDefineService:
+		return sdk.NewCheck(params.GasDefineService, ""),
+			checker.defineService(txInner)
 	}
 
 	return res, errors.ErrUnknownTxType(tx)
@@ -192,6 +195,9 @@ func (h Handler) DeliverTx(ctx sdk.Context, store state.SimpleDB,
 			ctx:      ctx2,
 		}.transferFn
 		return res, deliverer.unbond(_tx)
+	case TxDefineService:
+		res.GasUsed = params.GasDefineService
+		return res, deliverer.defineService(_tx)
 	}
 	return
 }
@@ -272,6 +278,9 @@ func (c check) unbond(tx TxUnbond) error {
 		return fmt.Errorf("not enough bond shares to unbond, have %v, trying to unbond %v",
 			bond.Shares, tx.Shares)
 	}
+	return nil
+}
+func (c check) defineService(tx TxDefineService) error {
 	return nil
 }
 
@@ -432,4 +441,24 @@ func (d deliver) unbond(tx TxUnbond) error {
 	returnCoins := txShares      //currently each share is worth one coin
 	return d.transfer(d.params.HoldAccount, d.sender,
 		coin.Coins{{d.params.AllowedBondDenom, returnCoins}})
+}
+
+func (d deliver) defineService(tx TxDefineService) error {
+
+	if d.store.Has([]byte(tx.Name)) {
+		return ErrServiceExists()
+	}
+
+	service := ServiceDefinition{
+		Name: tx.Name,
+		Description: tx.Description,
+	}
+	saveService(d.store, &service)
+
+	return nil
+}
+
+func (d deliver) getService(name string) *ServiceDefinition {
+
+	return loadService(d.store, name)
 }

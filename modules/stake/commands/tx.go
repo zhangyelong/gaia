@@ -13,7 +13,7 @@ import (
 	txcmd "github.com/cosmos/cosmos-sdk/client/commands/txs"
 	"github.com/cosmos/cosmos-sdk/modules/coin"
 
-	"github.com/cosmos/gaia/modules/stake"
+	"github.com/zhangyelong/gaia/modules/stake"
 )
 
 // nolint
@@ -26,6 +26,9 @@ const (
 	FlagIdentity = "keybase-sig"
 	FlagWebsite  = "website"
 	FlagDetails  = "details"
+
+	FlagName        = "svc-name"
+	FlagDescription = "svc-description"
 )
 
 // nolint
@@ -50,6 +53,11 @@ var (
 		Short: "unbond coins from a validator/candidate",
 		RunE:  cmdUnbond,
 	}
+	CmdDefineService = &cobra.Command{
+		Use:   "define-service",
+		Short: "define a new service",
+		RunE:  cmdDefineService,
+	}
 )
 
 func init() {
@@ -70,6 +78,10 @@ func init() {
 	fsCandidate.String(FlagWebsite, "", "optional website")
 	fsCandidate.String(FlagDetails, "", "optional detailed description space")
 
+	fsService := flag.NewFlagSet("", flag.ContinueOnError)
+	fsService.String(FlagName, "", "service name")
+	fsService.String(FlagDescription, "", "service description")
+
 	// add the flags
 	CmdDelegate.Flags().AddFlagSet(fsPk)
 	CmdDelegate.Flags().AddFlagSet(fsAmount)
@@ -83,6 +95,8 @@ func init() {
 
 	CmdEditCandidacy.Flags().AddFlagSet(fsPk)
 	CmdEditCandidacy.Flags().AddFlagSet(fsCandidate)
+
+	CmdDefineService.Flags().AddFlagSet(fsService)
 }
 
 func cmdDeclareCandidacy(cmd *cobra.Command, args []string) error {
@@ -181,4 +195,12 @@ func GetPubKey(pubKeyStr string) (pk crypto.PubKey, err error) {
 	copy(pkEd[:], pkBytes[:])
 	pk = pkEd.Wrap()
 	return
+}
+
+func cmdDefineService(cmd *cobra.Command, args []string) error {
+	name := viper.GetString(FlagName)
+	desc := viper.GetString(FlagDescription)
+
+	tx := stake.NewTxDefineService(name, desc)
+	return txcmd.DoTx(tx)
 }
